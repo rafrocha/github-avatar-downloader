@@ -5,10 +5,11 @@ var args = process.argv;
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
+//Main function, gets arguments from Command Line and callback function. Submits GET request into main API.
 function getRepoContributors(repoOwner, repoName, cb) {
-  if (args.length !== 4){
-    throw Error;
-  }
+    if (args.length !== 4) {
+        throw Error;
+    }
     var options = {
         url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
         headers: {
@@ -23,20 +24,22 @@ function getRepoContributors(repoOwner, repoName, cb) {
         cb(err, body);
     });
 }
-
+//Calling function with downloadImage function as callback.
 getRepoContributors(args[2], args[3], function(err, result) {
     var repos = JSON.parse(result);
-    repos.forEach(function(repo){
-    var login = repo.login;
-    var url = repo.avatar_url;
-    downloadImageByURL(url, login);
-  });
+    repos.forEach(function(repo) {
+        var login = repo.login;
+        var url = repo.avatar_url;
+        downloadImageByURL(url, login);
+    });
 });
 
+
+//Function to download image. Takes login and avatar URL as parameters and adds into new file.
 function downloadImageByURL(url, filePath) {
 
-    request.get(url) // Note 1
-        .on('error', function(err) { // Note 2
+    request.get(url)
+        .on('error', function(err) {
             throw err;
         })
         .on('response', function(response) {
