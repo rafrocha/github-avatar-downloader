@@ -1,5 +1,6 @@
 var request = require('request');
 var token = require('./secrets.js');
+var fs = require('fs');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -26,24 +27,29 @@ getRepoContributors("jquery", "jquery", function(err, result) {
   console.log("Result:", result);
 });
 
-// request.get('https://sytantris.github.io/http-examples/future.jpg')               // Note 1
-//        .on('error', function (err) {                                   // Note 2
-//          throw err;
-//        })
-//        .on('response', function (response) {
-//         if (response.statusCode < 200 || response.statusCode >= 300){
-//           console.log("Error " + response.statusCode + " found.");
-//           throw Error();
-//         }
-//          console.log('Response Status Code: ', response.statusCode);
-//          console.log('Response message: ' + response.statusMessage);
-//          console.log('Content type: ' + response.headers['content-type']);
-//        })
-//        .on('end', function(){
-//         console.log('Download complete.');
-//        })
+function downloadImageByURL(url, filePath) {
 
+request.get(url)               // Note 1
+       .on('error', function (err) {                                   // Note 2
+         throw err;
+       })
+       .on('response', function (response) {
+        if (response.statusCode < 200 || response.statusCode >= 300){
+          console.log("Error " + response.statusCode + " found.");
+          throw Error();
+        }
+         console.log('Response Status Code: ', response.statusCode);
+         console.log('Response message: ' + response.statusMessage);
+         console.log('Content type: ' + response.headers['content-type']);
+       })
+       .on('end', function(){
+        console.log('Download complete.');
+       })
+       .pipe(fs.createWriteStream(filePath));
 
+}
+
+downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "./kvirani.jpg");
 
 
 
