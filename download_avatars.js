@@ -11,15 +11,12 @@ function getRepoContributors(repoOwner, repoName, cb) {
         throw Error;
     }
     var options = {
-        url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
+        url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
         headers: {
             'User-Agent': 'request',
             'Authorization': token.GITHUB_TOKEN
         }
-
     };
-
-
     request(options, function(err, res, body) {
         cb(err, body);
     });
@@ -34,17 +31,15 @@ getRepoContributors(args[2], args[3], function(err, result) {
     });
 });
 
-
 //Function to download image. Takes login and avatar URL as parameters and adds into new file.
 function downloadImageByURL(url, filePath) {
-
     request.get(url)
         .on('error', function(err) {
             throw err;
         })
         .on('response', function(response) {
             if (response.statusCode < 200 || response.statusCode >= 300) {
-                console.log("Error " + response.statusCode + " found.");
+                console.log('Error ' + response.statusCode + ' found.');
                 throw Error();
             }
         })
@@ -52,7 +47,6 @@ function downloadImageByURL(url, filePath) {
             console.log('Download complete.');
         })
         .pipe(fs.createWriteStream('./avatars/' + filePath + '.jpg'));
-
 }
 
 // downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "./kvirani.jpg");
