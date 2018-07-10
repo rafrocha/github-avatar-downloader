@@ -9,8 +9,8 @@ console.log('Welcome to the GitHub Avatar Downloader!');
 
 //Main function, gets arguments from Command Line and callback function. Submits GET request into main API.
 function getRepoContributors(repoOwner, repoName, cb) {
-    if (args.length !== 4) {
-        console.log("Not valid inputs");
+    if (!repoOwner || !repoName) {
+        console.log("Incorrect number of arguments.");
         return;
     }
     var options = {
@@ -32,8 +32,11 @@ function getRepoContributors(repoOwner, repoName, cb) {
 //Calling function with downloadImage function as callback.
 getRepoContributors(args[2], args[3], function(err, result) {
     var repos = JSON.parse(result);
+     if (!fs.existsSync('./avatars/')){
+    mkdirp('./avatars/');
+    }
     repos.forEach(function(repo) {
-      var login = repo.login;
+      var login = './avatars/' + repo.login + '.jpg';
       var url = repo.avatar_url;
       downloadImageByURL(url, login);
     });
@@ -42,10 +45,6 @@ getRepoContributors(args[2], args[3], function(err, result) {
 //Function to download image. Takes login and avatar URL as parameters and adds into new file.
 function downloadImageByURL(url, filePath) {
 //Adds the directory if it doesnt exist.
-  if (!fs.existsSync('./avatars/')){
-    mkdirp('./avatars/');
-  }
-
     request.get(url)
         .on('error', function(err) {
             return err;
@@ -59,9 +58,7 @@ function downloadImageByURL(url, filePath) {
         .on('end', function() {
             console.log('Download complete.');
         })
-        .pipe(fs.createWriteStream('./avatars/' + filePath + '.jpg'));
+        .pipe(fs.createWriteStream(filePath));
 }
-
-// downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "./kvirani.jpg");
 
 
