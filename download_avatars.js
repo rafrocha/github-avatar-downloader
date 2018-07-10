@@ -10,7 +10,8 @@ console.log('Welcome to the GitHub Avatar Downloader!');
 //Main function, gets arguments from Command Line and callback function. Submits GET request into main API.
 function getRepoContributors(repoOwner, repoName, cb) {
     if (args.length !== 4) {
-        throw Error;
+        console.log("Not valid inputs");
+        return;
     }
     var options = {
         url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
@@ -20,16 +21,21 @@ function getRepoContributors(repoOwner, repoName, cb) {
         }
     };
     request(options, function(err, res, body) {
+      if (res.statusCode === 404){
+        console.log('Owner/Repo invalid.')
+        return;
+      }
         cb(err, body);
     });
 }
+
 //Calling function with downloadImage function as callback.
 getRepoContributors(args[2], args[3], function(err, result) {
     var repos = JSON.parse(result);
     repos.forEach(function(repo) {
-        var login = repo.login;
-        var url = repo.avatar_url;
-        downloadImageByURL(url, login);
+      var login = repo.login;
+      var url = repo.avatar_url;
+      downloadImageByURL(url, login);
     });
 });
 
@@ -42,12 +48,12 @@ function downloadImageByURL(url, filePath) {
 
     request.get(url)
         .on('error', function(err) {
-            throw err;
+            return err;
         })
         .on('response', function(response) {
             if (response.statusCode < 200 || response.statusCode >= 300) {
                 console.log('Error ' + response.statusCode + ' found.');
-                throw Error();
+                return Error();
             }
         })
         .on('end', function() {
