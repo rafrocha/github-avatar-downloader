@@ -1,6 +1,7 @@
 require('dotenv').config()
 var request = require('request');
 var fs = require('fs');
+var mkdirp = require('mkdirp');
 var args = process.argv;
 
 console.log('Welcome to the GitHub Avatar Downloader!');
@@ -33,6 +34,11 @@ getRepoContributors(args[2], args[3], function(err, result) {
 
 //Function to download image. Takes login and avatar URL as parameters and adds into new file.
 function downloadImageByURL(url, filePath) {
+//Adds the directory if it doesnt exist.
+  if (!fs.existsSync('./avatars/')){
+    mkdirp('./avatars/');
+  }
+
     request.get(url)
         .on('error', function(err) {
             throw err;
@@ -50,3 +56,5 @@ function downloadImageByURL(url, filePath) {
 }
 
 // downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "./kvirani.jpg");
+
+
